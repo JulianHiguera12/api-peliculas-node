@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYFILMES - Gestión de Directores</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-header">
+          <a href="../index.html" class="brand-logo">
+            <i data-lucide="aperture" style="color: var(--primary-red);"></i> MYFILMES
+          </a>
+        </div>
+
+        <div class="sidebar-section-title">ADMINISTRACIÓN</div>
+
+        <ul class="sidebar-menu">
+          <li class="sidebar-item"><a href="../index.html"><i data-lucide="layout-grid"></i> Resumen</a></li>
+          <li class="sidebar-item"><a href="./registros.html"><i data-lucide="film"></i> Media</a></li>
+          <li class="sidebar-item"><a href="./formulario.html"><i data-lucide="tag"></i> Géneros</a></li>
+          <li class="sidebar-item active"><a href="./directores.html"><i data-lucide="user"></i> Directores</a></li>
+          <li class="sidebar-item"><a href="./productoras.html"><i data-lucide="building"></i> Productoras</a></li>
+          <li class="sidebar-item"><a href="./tipos.html"><i data-lucide="layers"></i> Tipos</a></li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <main class="main-content">
+      <div class="top-bar">
+        <div>
+          <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">PANEL / DIRECTORES</span>
+          <h1 style="font-size: 1.5rem; font-weight: 700;">Gestión de directores</h1>
+        </div>
+
+        <button class="btn btn-danger" id="open-modal-btn">
+          <i data-lucide="plus"></i> Nuevo director
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NOMBRE</th>
+              <th>ESTADO</th>
+              <th style="text-align: right;">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr>
+              <td>DIR-01</td>
+              <td><strong>Christopher Nolan</strong></td>
+              <td><span class="badge badge-activo"><span class="badge-dot"></span> Activo</span></td>
+              <td style="text-align: right;">
+                <button class="btn-action" title="Editar"><i data-lucide="pencil" size="16"></i></button>
+                <button class="btn-action" title="Eliminar"><i data-lucide="trash-2" size="16"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>DIR-02</td>
+              <td><strong>Denis Villeneuve</strong></td>
+              <td><span class="badge badge-activo"><span class="badge-dot"></span> Activo</span></td>
+              <td style="text-align: right;">
+                <button class="btn-action" title="Editar"><i data-lucide="pencil" size="16"></i></button>
+                <button class="btn-action" title="Eliminar"><i data-lucide="trash-2" size="16"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>lucide.createIcons();</script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

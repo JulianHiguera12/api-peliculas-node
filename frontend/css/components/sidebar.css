@@ -1,0 +1,112 @@
+/* BARRA LATERAL (SIDEBAR) */
+.sidebar {
+  width: 260px;
+  background-color: var(--bg-dark-sidebar);
+  border-right: 1px solid var(--border-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  height: 100vh;
+  z-index: 10;
+  left: 0;
+  top: 0;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+}
+
+.brand-logo {
+  color: var(--text-white);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none !important; /* Quita subrayado */
+}
+
+.sidebar-section-title {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.sidebar-menu {
+  list-style: none !important; /* Quita viñetas o puntos */
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.sidebar-item {
+  margin-bottom: 0.25rem;
+}
+
+/* Enlaces del Sidebar (Solución al color morado) */
+.sidebar-item a, 
+.sidebar-item a:visited {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-muted) !important; /* Forzar color gris en lugar de morado */
+  text-decoration: none !important;   /* Quita el subrayado */
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.sidebar-item a:hover {
+  background-color: var(--bg-dark-hover);
+  color: var(--text-white) !important;
+}
+
+/* Item Seleccionado / Activo */
+.sidebar-item.active a, 
+.sidebar-item.active a:visited {
+  background-color: #2b323b;
+  color: var(--text-white) !important;
+  font-weight: 600;
+  position: relative;
+}
+
+.sidebar-item.active a::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  background-color: var(--primary-red);
+  border-radius: 50%;
+}
+
+/* Buscador en Header */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  background-color: var(--bg-dark-card);
+  border: 1px solid var(--border-dark);
+  color: var(--text-white);
+  padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  outline: none;
+  width: 240px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--text-dim);
+  pointer-events: none;
+}

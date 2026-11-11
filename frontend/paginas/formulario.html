@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYFILMES - Gestión de Géneros</title>
+  
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-header">
+          <a href="../index.html" class="brand-logo">
+            <i data-lucide="aperture" style="color: var(--primary-red);"></i> MYFILMES
+          </a>
+        </div>
+
+        <div class="sidebar-section-title">ADMINISTRACIÓN</div>
+
+        <ul class="sidebar-menu">
+          <li class="sidebar-item">
+            <a href="../index.html"><i data-lucide="layout-grid"></i> Resumen</a>
+          </li>
+          <li class="sidebar-item">
+            <a href="./registros.html"><i data-lucide="film"></i> Media</a>
+          </li>
+          <li class="sidebar-item active">
+            <a href="./formulario.html"><i data-lucide="tag"></i> Géneros</a>
+          </li>
+          <li class="sidebar-item">
+            <a href="./directores.html"><i data-lucide="user"></i> Directores</a>
+          </li>
+          <li class="sidebar-item">
+            <a href="./productoras.html"><i data-lucide="building"></i> Productoras</a>
+          </li>
+          <li class="sidebar-item">
+            <a href="./tipos.html"><i data-lucide="layers"></i> Tipos</a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      
+      <div class="top-bar">
+        <div>
+          <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">PANEL / GÉNEROS</span>
+          <h1 style="font-size: 1.5rem; font-weight: 700;">Gestión de géneros</h1>
+        </div>
+
+        <button class="btn btn-danger" id="open-modal-btn">
+          <i data-lucide="plus"></i> Nuevo registro
+        </button>
+      </div>
+
+      <!-- TABLA DE REGISTROS -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NOMBRE</th>
+              <th>ESTADO</th>
+              <th style="text-align: right;">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr>
+              <td>GEN-08</td>
+              <td><strong>Ciencia ficción</strong></td>
+              <td>
+                <span class="badge badge-activo">
+                  <span class="badge-dot"></span> Activo
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <button class="btn-action" title="Editar"><i data-lucide="pencil" size="16"></i></button>
+                <button class="btn-action" title="Eliminar"><i data-lucide="trash-2" size="16"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>GEN-07</td>
+              <td><strong>Documental</strong></td>
+              <td>
+                <span class="badge badge-activo">
+                  <span class="badge-dot"></span> Activo
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <button class="btn-action" title="Editar"><i data-lucide="pencil" size="16"></i></button>
+                <button class="btn-action" title="Eliminar"><i data-lucide="trash-2" size="16"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>GEN-06</td>
+              <td><strong>Suspenso</strong></td>
+              <td>
+                <span class="badge badge-activo">
+                  <span class="badge-dot"></span> Activo
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <button class="btn-action" title="Editar"><i data-lucide="pencil" size="16"></i></button>
+                <button class="btn-action" title="Eliminar"><i data-lucide="trash-2" size="16"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>GEN-05</td>
+              <td><strong>Musical</strong></td>
+              <td>
+                <span class="badge badge-inactivo">
+                  <span class="badge-dot"></span> Inactivo
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <button class="btn-action" title="Editar"><i data-lucide="pencil" size="16"></i></button>
+                <button class="btn-action" title="Eliminar"><i data-lucide="trash-2" size="16"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- VENTANA MODAL PARA EDITAR / CREAR -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+          <span style="font-size: 0.7rem; color: var(--primary-red); text-transform: uppercase;">CREAR / EDITAR</span>
+          <h3 style="font-size: 1.25rem; font-weight: 700;">Registro de Género</h3>
+        </div>
+        <button id="close-modal-btn" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <form id="api-form">
+        <div style="margin-bottom: 1rem;">
+          <label style="display:block; font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.25rem;">Nombre</label>
+          <input type="text" id="input-name" placeholder="Ej. Ciencia ficción" style="width:100%; padding:0.625rem; background:#0c0f12; border:1px solid var(--border-dark); color:#fff; border-radius:4px;" required>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display:block; font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; margin-bottom:0.25rem;">Estado</label>
+          <select id="select-status" style="width:100%; padding:0.625rem; background:#0c0f12; border:1px solid var(--border-dark); color:#fff; border-radius:4px;">
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:1rem;">
+          <button type="button" class="btn" id="cancel-btn" style="color:var(--text-muted);">Cancelar</button>
+          <button type="submit" id="btn-submit" class="btn btn-danger">
+            <i data-lucide="check"></i> Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    const modal = document.getElementById('modal');
+    document.getElementById('open-modal-btn').addEventListener('click', () => modal.classList.add('active'));
+    document.getElementById('close-modal-btn').addEventListener('click', () => modal.classList.remove('active'));
+    document.getElementById('cancel-btn').addEventListener('click', () => modal.classList.remove('active'));
+  </script>
+  <script src="../js/main.js"></script>
+</body>
+</html>
