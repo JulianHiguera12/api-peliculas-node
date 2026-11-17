@@ -1,5 +1,5 @@
 // CAMBIA ESTA URL POR EL DOMINIO QUE TE GENERE RAILWAY (terminando en /api)
-const API_BASE_URL = 'https://TU-BACKEND-EN-RAILWAY.up.railway.app/api';
+const API_BASE_URL = 'https://api-peliculas-node-production.up.railway.app/api';
 
 const currentModule = document.body.dataset.module;
 let editingId = null;
