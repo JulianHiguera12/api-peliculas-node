@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const db = require('./config/database');
 
 const generoRoutes = require('./routes/generoRoutes');
@@ -9,6 +10,7 @@ const mediaRoutes = require('./routes/mediaRoutes');
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/generos', generoRoutes);
