@@ -1,5 +1,5 @@
-// Ajusta el puerto
-const API_BASE_URL = 'http://localhost:3000/api';
+// CAMBIA ESTA URL POR EL DOMINIO QUE TE GENERE RAILWAY (terminando en /api)
+const API_BASE_URL = 'https://TU-BACKEND-EN-RAILWAY.up.railway.app/api';
 
 const currentModule = document.body.dataset.module;
 let editingId = null;
