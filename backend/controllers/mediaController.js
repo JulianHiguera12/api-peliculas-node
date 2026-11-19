@@ -13,6 +13,10 @@ const obtenerMedia = (req, res) => {
             m.fecha_creacion,
             m.fecha_actualizacion,
             m.anio_estreno,
+            m.genero_id,
+            m.director_id,
+            m.productora_id,
+            m.tipo_id,
             g.nombre AS genero,
             d.nombres AS director,
             p.nombre AS productora,
@@ -50,6 +54,10 @@ const obtenerMediaPorId = (req, res) => {
             m.fecha_creacion,
             m.fecha_actualizacion,
             m.anio_estreno,
+            m.genero_id,
+            m.director_id,
+            m.productora_id,
+            m.tipo_id,
             g.nombre AS genero,
             d.nombres AS director,
             p.nombre AS productora,
@@ -79,10 +87,38 @@ const obtenerMediaPorId = (req, res) => {
     });
 };
 
+// Calcula el siguiente serial (MOV-001, MOV-002, ...) a partir del último en la BD
+const calcularSiguienteSerial = (callback) => {
+    const sql = `
+        SELECT MAX(CAST(SUBSTRING_INDEX(serial, '-', -1) AS UNSIGNED)) AS ultimo
+        FROM media
+        WHERE serial LIKE 'MOV-%'
+    `;
+
+    db.query(sql, (error, resultados) => {
+        if (error) return callback(error);
+
+        const siguiente = (resultados[0].ultimo || 0) + 1;
+        callback(null, `MOV-${String(siguiente).padStart(3, '0')}`);
+    });
+};
+
+// Obtener el siguiente serial disponible (se muestra en el formulario)
+const obtenerSiguienteSerial = (req, res) => {
+    calcularSiguienteSerial((error, serial) => {
+        if (error) {
+            return res.status(500).json({
+                error: 'Error al calcular el serial'
+            });
+        }
+
+        res.json({ serial });
+    });
+};
+
 // Crear una media
 const crearMedia = (req, res) => {
     const {
-        serial,
         titulo,
         sinopsis,
         url,
@@ -127,43 +163,53 @@ const crearMedia = (req, res) => {
         )
     `;
 
-    db.query(
-        sql,
-        [
-            serial,
-            titulo,
-            sinopsis,
-            url,
-            imagen,
-            anio_estreno,
-            genero_id,
-            director_id,
-            productora_id,
-            tipo_id,
-            genero_id,
-            director_id,
-            productora_id,
-            tipo_id
-        ],
-        (error, resultado) => {
-            if (error) {
-                return res.status(500).json({
-                    error: 'Error al crear la media'
-                });
-            }
-
-            if (resultado.affectedRows === 0) {
-                return res.status(400).json({
-                    error: 'Los datos relacionados no son válidos o no están activos'
-                });
-            }
-
-            res.status(201).json({
-                mensaje: 'Media creada correctamente',
-                id: resultado.insertId
+    // El serial lo asigna el backend para evitar duplicados
+    calcularSiguienteSerial((errorSerial, serial) => {
+        if (errorSerial) {
+            return res.status(500).json({
+                error: 'Error al calcular el serial'
             });
         }
-    );
+
+        db.query(
+            sql,
+            [
+                serial,
+                titulo,
+                sinopsis,
+                url,
+                imagen,
+                anio_estreno,
+                genero_id,
+                director_id,
+                productora_id,
+                tipo_id,
+                genero_id,
+                director_id,
+                productora_id,
+                tipo_id
+            ],
+            (error, resultado) => {
+                if (error) {
+                    return res.status(500).json({
+                        error: 'Error al crear la media'
+                    });
+                }
+
+                if (resultado.affectedRows === 0) {
+                    return res.status(400).json({
+                        error: 'Los datos relacionados no son válidos o no están activos'
+                    });
+                }
+
+                res.status(201).json({
+                    mensaje: 'Media creada correctamente',
+                    id: resultado.insertId,
+                    serial
+                });
+            }
+        );
+    });
 };
 
 // Actualizar una media
@@ -261,6 +307,7 @@ const eliminarMedia = (req, res) => {
 
 module.exports = {
     obtenerMedia,
+    obtenerSiguienteSerial,
     obtenerMediaPorId,
     crearMedia,
     actualizarMedia,

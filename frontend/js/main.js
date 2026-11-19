@@ -33,14 +33,136 @@ const moduleConfig = {
   }
 };
 
+// Listas desplegables del formulario de media (se llenan desde la API)
+const selectOptions = {
+  genero_id: { endpoint: '/generos', label: 'nombre' },
+  director_id: { endpoint: '/directores', label: 'nombres' },
+  productora_id: { endpoint: '/productoras', label: 'nombre' },
+  tipo_id: { endpoint: '/tipos', label: 'nombre' }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   if (currentModule === 'resumen') {
     cargarResumen();
   } else if (moduleConfig[currentModule]) {
     cargarTabla(currentModule);
     configurarFormulario(currentModule);
+    if (currentModule === 'media') {
+      cargarOpcionesSelect();
+      iniciarSelectorAnio();
+    }
   }
 });
+
+// ================= SERIAL AUTOMÁTICO (MEDIA) =================
+// El backend asigna el serial al guardar; aquí solo se muestra el siguiente
+async function mostrarSiguienteSerial() {
+  const input = document.getElementById('input-serial');
+  input.value = 'Calculando...';
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/media/siguiente-serial`);
+    const data = await res.json();
+    input.value = data.serial;
+  } catch (error) {
+    input.value = '';
+    console.error('Error obteniendo el serial:', error);
+  }
+}
+
+// ================= SELECTOR DE AÑO (MEDIA) =================
+// Rango del tipo YEAR de MySQL, limitado a 10 años en el futuro
+const ANIO_MINIMO = 1901;
+const ANIO_MAXIMO = new Date().getFullYear() + 10;
+
+function iniciarSelectorAnio() {
+  const input = document.getElementById('input-anio_estreno');
+  const panel = document.getElementById('year-picker-panel');
+  if (!input || !panel) return;
+
+  let inicioPagina;
+
+  const renderizar = () => {
+    const seleccionado = Number(input.value);
+    const actual = new Date().getFullYear();
+    const fin = inicioPagina + 11;
+
+    let html = `
+      <div class="year-picker-header">
+        <button type="button" class="year-picker-nav" data-paso="-12" ${inicioPagina <= ANIO_MINIMO ? 'disabled' : ''}>‹</button>
+        <span>${inicioPagina} – ${fin}</span>
+        <button type="button" class="year-picker-nav" data-paso="12" ${fin >= ANIO_MAXIMO ? 'disabled' : ''}>›</button>
+      </div>
+      <div class="year-picker-grid">
+    `;
+
+    for (let anio = inicioPagina; anio <= fin; anio++) {
+      const clases = ['year-picker-year'];
+      if (anio === seleccionado) clases.push('seleccionado');
+      if (anio === actual) clases.push('actual');
+      const fueraDeRango = anio < ANIO_MINIMO || anio > ANIO_MAXIMO;
+      html += `<button type="button" class="${clases.join(' ')}" data-anio="${anio}" ${fueraDeRango ? 'disabled' : ''}>${anio}</button>`;
+    }
+
+    panel.innerHTML = html + '</div>';
+  };
+
+  input.addEventListener('click', () => {
+    if (panel.classList.contains('open')) {
+      panel.classList.remove('open');
+      return;
+    }
+    // Abre en la página de 12 años que contiene el año elegido (o el actual)
+    const base = Number(input.value) || new Date().getFullYear();
+    inicioPagina = base - ((base - ANIO_MINIMO) % 12);
+    renderizar();
+    panel.classList.add('open');
+  });
+
+  panel.addEventListener('click', (e) => {
+    const nav = e.target.closest('[data-paso]');
+    const opcion = e.target.closest('[data-anio]');
+
+    if (nav) {
+      inicioPagina += Number(nav.dataset.paso);
+      renderizar();
+    } else if (opcion) {
+      input.value = opcion.dataset.anio;
+      panel.classList.remove('open');
+    }
+  });
+
+  // Cierra el selector al hacer clic fuera o con Escape
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.year-picker')) panel.classList.remove('open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') panel.classList.remove('open');
+  });
+}
+
+// ================= LLENAR LISTAS DESPLEGABLES =================
+// Los registros inactivos se muestran deshabilitados porque la API no los acepta
+async function cargarOpcionesSelect() {
+  await Promise.all(Object.entries(selectOptions).map(async ([field, option]) => {
+    const select = document.getElementById(`input-${field}`);
+    if (!select) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}${option.endpoint}`);
+      const data = await res.json();
+
+      select.innerHTML = '<option value="" disabled selected>Selecciona...</option>' +
+        data.map(item => {
+          const inactivo = item.estado === 'Inactivo';
+          return `<option value="${item.id}" ${inactivo ? 'disabled' : ''}>${item[option.label]}${inactivo ? ' (Inactivo)' : ''}</option>`;
+        }).join('');
+    } catch (error) {
+      select.innerHTML = '<option value="" disabled selected>No se pudo cargar (¿backend apagado?)</option>';
+      console.error(`Error cargando opciones de ${field}:`, error);
+    }
+  }));
+}
 
 // ================= 1. LISTAR DATOS EN TABLA (GET) =================
 async function cargarTabla(modulo) {
@@ -102,6 +224,7 @@ function configurarFormulario(modulo) {
     openBtn.addEventListener('click', () => {
       editingId = null;
       form.reset();
+      if (modulo === 'media') mostrarSiguienteSerial();
       modal.classList.add('active');
     });
   }
@@ -118,9 +241,16 @@ function configurarFormulario(modulo) {
     config.fields.forEach(field => {
       const input = document.getElementById(`input-${field}`);
       if (input) {
-        payload[field] = input.type === 'number' ? Number(input.value) : input.value;
+        const esNumerico = input.type === 'number' || field.endsWith('_id') || field === 'anio_estreno';
+        payload[field] = esNumerico ? Number(input.value) : input.value;
       }
     });
+
+    // Los campos readonly no los valida el navegador, por eso se revisa aquí
+    if (modulo === 'media' && !payload.anio_estreno) {
+      alert('Selecciona el año de estreno.');
+      return;
+    }
 
     const url = editingId
       ? `${API_BASE_URL}${config.endpoint}/${editingId}`
